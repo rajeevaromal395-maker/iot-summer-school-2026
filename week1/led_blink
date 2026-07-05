@@ -1,3 +1,8 @@
+/*
+ * Author: Aromal R S
+ * Date: 2026-07-05
+ * Description: Blink LED with pot control and serial logging
+ */
 int count = 0;
 void setup() {
   pinMode(13, OUTPUT);
