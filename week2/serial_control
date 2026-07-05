@@ -1,1 +1,48 @@
+const int ledPin = LED_BUILTIN;
+int blinkCounter = 0;
 
+void setup() {
+  pinMode(ledPin, OUTPUT);
+  Serial.begin(9600);
+  Serial.println("System Ready. Enter command:");
+}
+
+void loop() {
+  if (Serial.available() > 0) {
+    String cmd = Serial.readStringUntil('\n');
+    cmd.trim(); // Remove whitespace
+
+    if (cmd == "LED_ON") {
+      digitalWrite(ledPin, HIGH);
+      Serial.println("LED is ON");
+    } 
+    else if (cmd == "LED_OFF") {
+      digitalWrite(ledPin, LOW);
+      Serial.println("LED is OFF");
+    } 
+    else if (cmd.startsWith("BLINK_")) {
+      int x = cmd.substring(6).toInt();
+      if (x >= 1 && x <= 9) {
+        for (int i = 0; i < x; i++) {
+          digitalWrite(ledPin, HIGH); delay(300);
+          digitalWrite(ledPin, LOW); delay(300);
+        }
+        blinkCounter += x;
+        Serial.print("Blinked "); Serial.print(x); Serial.println(" times.");
+      } else {
+        Serial.println("ERROR: Invalid blink count (1-9)");
+      }
+    } 
+    else if (cmd == "STATUS") {
+      Serial.print("LED State: "); Serial.println(digitalRead(ledPin));
+      Serial.print("Total Blinks: "); Serial.println(blinkCounter);
+    } 
+    else if (cmd == "RESET") {
+      blinkCounter = 0;
+      Serial.println("Counter Reset.");
+    } 
+    else {
+      Serial.println("ERROR: Unknown command");
+    }
+  }
+}
