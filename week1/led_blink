@@ -4,10 +4,11 @@ void setup() {
   Serial.begin(9600);
 }
 void loop() {
+  int speed = analogRead(A0);
   digitalWrite(13, HIGH);
-  delay(500);
+  delay(speed);
   digitalWrite(13, LOW);
-  delay(500);
+  delay(speed);
   Serial.print("Blink count: ");
   Serial.println(++count);
 }
