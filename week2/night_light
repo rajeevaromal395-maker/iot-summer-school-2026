@@ -1,0 +1,46 @@
+const int ledPin = 9;   // Must be a PWM pin
+const int btnPin = 7;
+int mode = 1;           // 1: Slow, 2: Fast, 3: SOS
+bool lastBtnState = HIGH;
+
+void setup() {
+  pinMode(ledPin, OUTPUT);
+  pinMode(btnPin, INPUT_PULLUP);
+  Serial.begin(9600);
+  Serial.println("Night Light Initialized. Mode: 1 (Slow Breathing)");
+}
+
+void loop() {
+  // Mode Selection
+  if (digitalRead(btnPin) == LOW && lastBtnState == HIGH) {
+    mode = (mode % 3) + 1;
+    Serial.print("Mode switched to: "); Serial.println(mode);
+    delay(250); // Debounce
+  }
+  lastBtnState = digitalRead(btnPin);
+
+  // Execute Modes
+  if (mode == 1) breathingEffect(3000);
+  else if (mode == 2) breathingEffect(500);
+  else if (mode == 3) playSOS();
+}
+
+void breathingEffect(int duration) {
+  int fadeDelay = duration / 510;
+  for (int i = 0; i <= 255; i++) { analogWrite(ledPin, i); delay(fadeDelay); }
+  for (int i = 255; i >= 0; i--) { analogWrite(ledPin, i); delay(fadeDelay); }
+}
+
+void playSOS() {
+  for (int i = 0; i < 3; i++) { flash(200); } // S
+  delay(200);
+  for (int i = 0; i < 3; i++) { flash(600); } // O
+  delay(200);
+  for (int i = 0; i < 3; i++) { flash(200); } // S
+  delay(1000);
+}
+
+void flash(int duration) {
+  digitalWrite(ledPin, HIGH); delay(duration);
+  digitalWrite(ledPin, LOW); delay(200);
+}
