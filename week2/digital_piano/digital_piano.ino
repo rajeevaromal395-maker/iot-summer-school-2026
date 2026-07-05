@@ -12,3 +12,10 @@ if (digitalRead(12) == LOW) { // Mode toggle button
   delay(250); // Simple debounce
 }
 // Use isMajor to pick between majorNotes[] and minorNotes[]
+bool isMajor = true;
+// Inside loop():
+if (digitalRead(12) == LOW) { // Mode toggle button
+  isMajor = !isMajor;
+  delay(250); // Simple debounce
+}
+// Use isMajor to pick between majorNotes[] and minorNotes[]
