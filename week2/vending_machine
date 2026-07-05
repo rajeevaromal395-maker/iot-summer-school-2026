@@ -1,1 +1,49 @@
+// States
+enum State { IDLE, COIN_INSERTED, ITEM_SELECTED, DISPENSING };
+State currentState = IDLE;
 
+// Pins
+const int btnCoin = 8, btnSelect = 9, btnCancel = 10;
+const int ledIdle = 2, ledCoin = 3, ledDispense = 4;
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(btnCoin, INPUT_PULLUP);
+  pinMode(btnSelect, INPUT_PULLUP);
+  pinMode(btnCancel, INPUT_PULLUP);
+  pinMode(ledIdle, OUTPUT); pinMode(ledCoin, OUTPUT); pinMode(ledDispense, OUTPUT);
+}
+
+void loop() {
+  // Global Cancel Check
+  if (digitalRead(btnCancel) == LOW) transition(IDLE);
+
+  switch (currentState) {
+    case IDLE:
+      digitalWrite(ledIdle, HIGH);
+      if (digitalRead(btnCoin) == LOW) transition(COIN_INSERTED);
+      break;
+
+    case COIN_INSERTED:
+      digitalWrite(ledCoin, HIGH);
+      if (digitalRead(btnSelect) == LOW) transition(ITEM_SELECTED);
+      break;
+
+    case ITEM_SELECTED:
+      transition(DISPENSING);
+      break;
+
+    case DISPENSING:
+      digitalWrite(ledDispense, HIGH);
+      delay(2000); // Simulate motor time
+      transition(IDLE);
+      break;
+  }
+}
+
+void transition(State newState) {
+  Serial.print("Transitioning to: "); Serial.println(newState);
+  digitalWrite(ledIdle, LOW); digitalWrite(ledCoin, LOW); digitalWrite(ledDispense, LOW);
+  currentState = newState;
+  delay(300); // Debounce
+}
